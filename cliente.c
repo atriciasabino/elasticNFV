@@ -29,8 +29,7 @@ int main(int argc, char *argv[])
         char s[200];
         int i = 0;
         int j;
-	float alfaMax=1;
-        
+	
 	Randomize();
 	pthread_t th_id[10000]; //10 mil threads 
 
@@ -46,7 +45,7 @@ int main(int argc, char *argv[])
         TempExp = atoi(argv[2]);
         strcpy(alvo, argv[3]);
         alfa = 1;
-        alfaMax = atof(argv[4]);
+        alfa = atof(argv[4]);
         memcpy(tag, argv[5], 20);
 
 	sprintf(nomearq, "res/cliente%04u.txt", id);
@@ -58,46 +57,9 @@ int main(int argc, char *argv[])
                 return 0;
         }
 
-        int Estado=0;
-        unsigned int TempEstado[4];
-        //definir inicio (5% do experimento)
-        float passo;
-        alfa = 0.00001;
-        passo = (alfaMax - alfa) / (TempExp * 0.4);
-        TempEstado[0]=(unsigned)time(NULL) + (unsigned)(TempExp * 0.05);
-        //definir rampa ascendente
-        TempEstado[1]=(unsigned)time(NULL) + (unsigned)(TempExp * 0.45);
-        //definir patamar
-        TempEstado[2]=(unsigned)time(NULL) + (unsigned)(TempExp * 0.55);
-        //definir rampa descendente
-        TempEstado[3]=(unsigned)time(NULL) + (unsigned)(TempExp * 0.95);
-        //definir finalizacao
         TempExp += (unsigned)time(NULL);
-        unsigned int T1, T2;
         while (TempExp >= (unsigned)time(NULL)) {
-                T2 = (unsigned)time(NULL);
-                if (TempEstado[Estado] <= T2)
-                    Estado++;
-                switch (Estado) {
-                        case 0:
-                            alfa = 0.00001;
-                            break;
-                        case 1:
-                            alfa += (float)(T2 - T1) * passo;
-                            break;
-                        case 2:
-                            alfa = alfaMax;
-                            break;
-                        case 3:
-                            alfa -= (float)(T2 - T1) * passo;
-                            if (alfa==0) alfa = 0.00001;
-                            break;
-                        case 4:
-                            alfa = 0.00001;
-                            break;
-                }
-                T1 = T2;
-                SleepExp();
+		SleepExp();
 		i++;
 		pthread_create( &th_id[i-1], NULL, cliente, (void *)&i);
 	}
